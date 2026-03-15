@@ -1,0 +1,4 @@
+build/
+disk/*
+!disk/README.md
+tools/
