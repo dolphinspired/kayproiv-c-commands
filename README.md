@@ -50,6 +50,11 @@ cd tools/runcpm-drive && ../runcpm/RunCPM
 
 **4. Validate on accurate hardware emulation (optional):**
 ```bash
+make launch-mame
+```
+Launches MAME with the Kaypro IV driver in a windowed 1120×480 display (2× integer scale of the native 560×240). Press **Alt+F4** to close.
+
+```bash
 make image
 tools/z80pack/cpmsim/cpmsim -d disk/kaypro4.img
 ```

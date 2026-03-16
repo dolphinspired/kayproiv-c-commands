@@ -11,8 +11,8 @@ DISKDEFS_DIR="$REPO_DIR/tools/cpmtools/share"
 BASE_IMAGE="$REPO_DIR/disk/kaypro4.img"
 BUILD_IMAGE="$REPO_DIR/disk/build.img"
 
-# 80 tracks × 2 heads × 10 sectors × 512 bytes = 819200 bytes
-DISK_SIZE=819200
+# 80 tracks × 1 head × 10 sectors × 512 bytes = 409600 bytes
+DISK_SIZE=409600
 
 if [ ! -f "$BASE_IMAGE" ]; then
     echo "ERROR: Base boot image not found at $BASE_IMAGE"

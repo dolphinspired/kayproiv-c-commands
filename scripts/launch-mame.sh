@@ -25,4 +25,15 @@ if [ ! -f "$BUILD_IMAGE" ]; then
     exit 1
 fi
 
-exec "$MAME" kayproiv -flop1 "$IMAGE" -flop2 "$BUILD_IMAGE"
+# MAME can't auto-detect raw Kaypro sector images; convert to MFI first.
+# kaypro2x = 80-track single-sided 5.25" DSDD, matching the Kaypro IV format.
+MFI_IMAGE="$REPO_DIR/disk/kaypro4.mfi"
+MFI_BUILD="$REPO_DIR/disk/build.mfi"
+
+floptool flopconvert kaypro2x mfi "$IMAGE" "$MFI_IMAGE"
+floptool flopconvert kaypro2x mfi "$BUILD_IMAGE" "$MFI_BUILD"
+
+# Native resolution is 560x240. Use 1120x480 here for a readable 2x integer scale.
+echo "Launching MAME. Press Alt+F4 to close."
+exec "$MAME" kayproiv -rompath "$REPO_DIR/.mame/roms" -flop1 "$MFI_IMAGE" -flop2 "$MFI_BUILD" \
+    -window -nomaximize -resolution 1120x480

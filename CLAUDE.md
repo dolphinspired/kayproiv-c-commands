@@ -67,7 +67,7 @@ Summaries of researched hardware and software capabilities are in `docs/`:
     seclen 512
     tracks 80
     sectrk 10
-    heads 2
+    heads 1
     blocksize 2048
     maxdir 64
     skew 0
@@ -75,6 +75,7 @@ Summaries of researched hardware and software capabilities are in `docs/`:
     os 2.2
   end
   ```
+- **MAME floppy format**: MAME cannot auto-detect raw Kaypro sector images. `launch-mame.sh` converts them to MFI via `floptool` (from `mame-tools` package). The Kaypro IV uses single-sided disks — format is `kaypro2x` (80-track SS), matching the 409,600-byte boot image from Archive.org.
 - **RunCPM test automation**: Works for programs that read from stdin normally. Raw terminal / curses programs will not work with this approach and need an `expect` script.
 - **Z88DK `ZCCCFG`**: Must be set to `tools/z88dk/lib/config` at both build time (setup.sh) and compile time (Makefile). Without it, zcc cannot find its configuration.
 - **`tools/` is gitignored**: Running `make setup` on a fresh clone rebuilds everything from source.
