@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
-# Creates a bootable Kaypro 4 disk image containing all compiled .COM files.
-# Requires disk/kaypro4.img — see README for how to obtain it.
+# Creates disk/build.img — a blank Kaypro 4 CP/M disk containing all compiled
+# .COM files. Intended for use as drive B alongside the base kaypro4.img.
+# Requires disk/kaypro4.img to exist — see README for how to obtain it.
 set -e
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+MKFS="$REPO_DIR/tools/cpmtools/bin/mkfs.cpm"
 CPMCP="$REPO_DIR/tools/cpmtools/bin/cpmcp"
-IMAGE="$REPO_DIR/disk/kaypro4.img"
+DISKDEFS_DIR="$REPO_DIR/tools/cpmtools/share"
 BASE_IMAGE="$REPO_DIR/disk/kaypro4.img"
+BUILD_IMAGE="$REPO_DIR/disk/build.img"
+
+# 80 tracks × 2 heads × 10 sectors × 512 bytes = 819200 bytes
+DISK_SIZE=819200
 
 if [ ! -f "$BASE_IMAGE" ]; then
     echo "ERROR: Base boot image not found at $BASE_IMAGE"
@@ -15,14 +21,19 @@ if [ ! -f "$BASE_IMAGE" ]; then
 fi
 
 mkdir -p "$REPO_DIR/disk"
-cp "$BASE_IMAGE" "$IMAGE"
+
+# cpmtools looks for 'diskdefs' in the current directory first, so run from there
+cd "$DISKDEFS_DIR"
+
+# Create a blank disk image and format it as kaypro4
+dd if=/dev/zero of="$BUILD_IMAGE" bs=1 count=0 seek=$DISK_SIZE 2>/dev/null
+"$MKFS" -f kaypro4 "$BUILD_IMAGE"
 
 for f in "$REPO_DIR"/build/*.COM; do
     [ -f "$f" ] || continue
     echo "  Adding $(basename "$f")..."
-    "$CPMCP" -f kaypro4 "$IMAGE" "$f" "0:$(basename "$f")"
+    "$CPMCP" -f kaypro4 "$BUILD_IMAGE" "$f" "0:$(basename "$f")"
 done
 
-echo "Image ready: $IMAGE"
-echo "To validate in Z80Pack: tools/z80pack/cpmsim/cpmsim -d $IMAGE"
-echo "To write to floppy:     gw write --drive A --format kaypro.800 $IMAGE"
+echo "Build image ready: $BUILD_IMAGE"
+echo "To write to floppy: gw write --drive B --format kaypro.800 $BUILD_IMAGE"

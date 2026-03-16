@@ -61,7 +61,7 @@ Summaries of researched hardware and software capabilities are in `docs/`:
 
 ## Known Gotchas
 
-- **cpmtools diskdefs**: `kaypro4` may not be in the default diskdefs file. If `cpmcp` fails, add this entry to `tools/cpmtools/share/cpmtools/diskdefs`:
+- **cpmtools diskdefs**: `kaypro4` may not be in the default diskdefs file. If `cpmcp` fails, add this entry to `tools/cpmtools/share/diskdefs`:
   ```
   diskdef kaypro4
     seclen 512

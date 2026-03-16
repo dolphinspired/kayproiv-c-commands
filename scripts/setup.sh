@@ -65,4 +65,13 @@ else
     echo "==> cpmtools already installed, skipping."
 fi
 
+# --- MAME ---
+if command -v mame &>/dev/null; then
+    echo "==> MAME already installed, skipping."
+else
+    echo "==> MAME not found. Install it with:"
+    echo "      sudo apt install mame"
+    echo "    Then re-run this script to verify."
+fi
+
 echo "==> Setup complete."

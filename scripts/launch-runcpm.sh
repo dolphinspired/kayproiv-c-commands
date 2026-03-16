@@ -17,7 +17,7 @@ if [ -n "$KAYPRO_TERMINAL" ]; then
     exec ../runcpm/RunCPM
 fi
 
-TITLE="Kaypro IV"
+TITLE="Kaypro IV (RunCPM)"
 CMD="env KAYPRO_TERMINAL=1 bash $0"
 
 if command -v xterm &>/dev/null; then
