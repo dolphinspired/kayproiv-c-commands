@@ -20,6 +20,13 @@ Clones and builds all tools (Z88DK, RunCPM, Z80Pack, cpmtools) into `tools/`. Z8
 
 ## Workflow
 
+## Programs
+
+| Program | Description |
+|---------|-------------|
+| `HELLO.COM` | Prompts for your name and prints a greeting |
+| `RAND.COM` | Generates a lucky number in a user-specified range. Seeds from keyboard-timing entropy XOR the Z80 R register. Run as `RAND` interactively, or `RAND <seed>` to specify a seed. |
+
 **1. Write your program** in `src/`. See `src/hello.c` for an example.
 
 **2. Compile:**

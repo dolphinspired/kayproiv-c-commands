@@ -1,0 +1,3 @@
+Minimum (default 1): 
+Maximum (default 100): 
+Your lucky number is: 29

@@ -1,0 +1,6 @@
+RAND 1
+abc
+5
+xyz
+3
+8

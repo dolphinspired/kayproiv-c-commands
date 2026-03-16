@@ -1,0 +1,9 @@
+Minimum (default 1): abc
+Invalid input.
+Minimum (default 1): 5
+Maximum (default 100): xyz
+Invalid input.
+Maximum (default 100): 3
+Maximum must be greater than minimum (5).
+Maximum (default 100): 8
+Your lucky number is: 5

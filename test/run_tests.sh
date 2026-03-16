@@ -27,8 +27,9 @@ mkdir -p "$DRIVE_DIR/A/0"
 for case_dir in "$CASES_DIR"/*/; do
     [ -d "$case_dir" ] || continue
     prog=$(basename "$case_dir")
-    prog_upper=$(echo "$prog" | tr '[:lower:]' '[:upper:]')
-    com_file="$REPO_DIR/build/${prog_upper}.COM"
+    input="$case_dir/input.txt"
+    cmd_name=$(head -1 "$input" | awk '{print $1}' | tr '[:lower:]' '[:upper:]')
+    com_file="$REPO_DIR/build/${cmd_name}.COM"
 
     if [ ! -f "$com_file" ]; then
         echo "SKIP: $prog (no $com_file)"

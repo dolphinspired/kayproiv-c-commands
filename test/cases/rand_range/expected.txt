@@ -1,0 +1,3 @@
+Minimum (default 1): 1000
+Maximum (default 100): 2000
+Your lucky number is: 1064
