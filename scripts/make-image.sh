@@ -24,14 +24,14 @@ mkdir -p "$REPO_DIR/bin"
 # cpmtools looks for 'diskdefs' in the current directory first, so run from there
 cd "$DISKDEFS_DIR"
 
-# Create a blank disk image and format it as kaypro4
+# Create a blank disk image and format it as kpiv (Kaypro IV)
 dd if=/dev/zero of="$BUILD_IMAGE" bs=1 count=0 seek=$DISK_SIZE 2>/dev/null
-"$MKFS" -f kaypro4 "$BUILD_IMAGE"
+"$MKFS" -f kpiv "$BUILD_IMAGE"
 
 for f in "$REPO_DIR"/build/*.COM; do
     [ -f "$f" ] || continue
     echo "  Adding $(basename "$f")..."
-    "$CPMCP" -f kaypro4 "$BUILD_IMAGE" "$f" "0:$(basename "$f")"
+    "$CPMCP" -f kpiv "$BUILD_IMAGE" "$f" "0:$(basename "$f")"
 done
 
 echo "Build image ready: $BUILD_IMAGE"

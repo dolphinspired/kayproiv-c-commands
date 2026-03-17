@@ -3,10 +3,11 @@ TOOLS := tools
 export PATH   := $(CURDIR)/$(TOOLS)/z88dk/bin:$(PATH)
 export ZCCCFG := $(CURDIR)/$(TOOLS)/z88dk/lib/config
 
-.PHONY: all setup test clean image launch launch-mame
+.PHONY: all setup test clean launch launch-mame
 
 all:
 	SRC_DIR=src bash scripts/compile.sh
+	bash scripts/make-image.sh
 
 setup:
 	bash scripts/setup.sh
@@ -14,13 +15,10 @@ setup:
 test: all
 	bash test/run_tests.sh
 
-image: all
-	bash scripts/make_image.sh
-
-launch: all
+launch:
 	bash scripts/launch-runcpm.sh
 
-launch-mame: image
+launch-mame:
 	bash scripts/launch-mame.sh
 
 clean:

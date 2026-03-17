@@ -6,9 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 make setup      # First-time setup: clone and build all tools into tools/ (~10-20 min for Z88DK)
-make            # Compile all src/*.c → build/*.COM
+make            # Compile all src/*.c → build/*.COM and bundle into bin/build.img
 make test       # Compile then run automated tests via RunCPM
-make image      # Compile then bundle .COM files into bin/build.img
 make clean      # Delete build/ and bin/
 ```
 
@@ -38,7 +37,7 @@ The pipeline has four stages: **compile → emulate (fast) → emulate (accurate
 
 **Fast emulation** (RunCPM): Treats a directory tree as CP/M drives — `tools/runcpm-drive/A/0/` maps to drive A. The test runner in `test/run_tests.sh` automates this by feeding stdin to RunCPM (program name from `input.txt` then `^C` to quit). RunCPM is an interactive shell, not a single-program launcher. The test runner strips noise by: removing ANSI escape codes, stripping `\r` (RunCPM uses CRLF), collapsing backspace-based echo sequences (`_\b \bX` → `X`), and extracting only lines between the first `A0>` prompt line and the next one. `expected.txt` should match this cleaned output. Also: `fgets` in CP/M programs receives `\r\n` line endings — always strip with `strcspn(name, "\r\n")`, not just `"\n"`.
 
-**Accurate emulation** (MAME): Boots from an actual Kaypro IV disk image. Requires `usr-bin/kayproiv.img` sourced from Archive.org (not in repo). `scripts/make_image.sh` creates `bin/build.img` with compiled `.COM` files; `launch-mame.sh` symlinks both images into `bin/` with `.kay` extension (MAME's native Kaypro raw format) and launches MAME. No floptool conversion needed.
+**Accurate emulation** (MAME): Boots from an actual Kaypro IV disk image. Requires `usr-bin/kayproiv.img` sourced from Archive.org (not in repo). `scripts/make-image.sh` creates `bin/build.img` with compiled `.COM` files; `launch-mame.sh` symlinks both images into `bin/` with `.kay` extension (MAME's native Kaypro raw format) and launches MAME. No floptool conversion needed.
 
 **Deploy** (greaseweazle): `gw write --drive A --format kaypro.800 bin/kayproiv.img` — format string may need verification against installed gw version.
 
@@ -61,25 +60,12 @@ Summaries of researched hardware and software capabilities are in `docs/`:
 
 ## Known Gotchas
 
-- **cpmtools diskdefs**: `kaypro4` may not be in the default diskdefs file. If `cpmcp` fails, add this entry to `tools/cpmtools/share/diskdefs`:
-  ```
-  diskdef kaypro4
-    seclen 512
-    tracks 80
-    sectrk 10
-    heads 1
-    blocksize 2048
-    maxdir 64
-    skew 0
-    boottrk 2
-    os 2.2
-  end
-  ```
-- **MAME floppy format**: Pass raw Kaypro images to MAME with `.kay` extension — MAME's format handler (`kaypro2x`) reads them directly without any conversion. The Kaypro IV uses 40-track double-sided (DSDD) disks; 40 cylinders × 2 heads × 10 sectors × 512 bytes = 409,600 bytes. `floptool flopconvert kaypro2x mfi` is no longer used. The `mame-tools` package is no longer required.
+- **cpmtools diskdefs**: Use format name `kpiv` — this is the Kaypro IV entry in the upstream diskdefs (comment has a typo: "Kayro IV"). The diskdefs file at `tools/cpmtools/share/diskdefs` must match the upstream exactly: `https://raw.githubusercontent.com/lipro-cpm4l/cpmtools/refs/heads/cpm4l/cpmtools-2.21/diskdefs`
+- **MAME floppy format**: Pass raw Kaypro images to MAME with `.img` extension — standard raw sector format MAME recognizes. The Kaypro IV uses 40-track double-sided (DSDD) disks; 40 cylinders × 2 heads × 10 sectors × 512 bytes = 409,600 bytes. `floptool flopconvert kaypro2x mfi` is no longer used. The `mame-tools` package is no longer required.
 - **RunCPM test automation**: Works for programs that read from stdin normally. Raw terminal / curses programs will not work with this approach and need an `expect` script.
 - **Z88DK `ZCCCFG`**: Must be set to `tools/z88dk/lib/config` at both build time (setup.sh) and compile time (Makefile). Without it, zcc cannot find its configuration.
 - **`tools/` is gitignored**: Running `make setup` on a fresh clone rebuilds everything from source.
-- **`usr-bin/` vs `bin/`**: `usr-bin/` holds user-supplied files (disk image + ROM files) that are gitignored. `bin/` holds all generated files (also gitignored). `launch-mame.sh` symlinks images from `usr-bin/` and `bin/` into `bin/*.kay` at launch time.
+- **`usr-bin/` vs `bin/`**: `usr-bin/` holds user-supplied files (disk image + ROM files) that are gitignored. `bin/` holds all generated files (also gitignored). `make setup` copies `usr-bin/kayproiv.img` → `bin/kayproiv.img` for MAME to use.
 
 ## ROM dumps
 

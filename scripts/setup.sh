@@ -77,9 +77,17 @@ fi
 # --- Boot disk image ---
 USR_BIN_DIR="$REPO_DIR/usr-bin"
 BOOT_SRC="$USR_BIN_DIR/kayproiv.img"
+BOOT_DST="$REPO_DIR/bin/kayproiv.img"
 
 if [ -f "$BOOT_SRC" ]; then
-    echo "==> Boot image found."
+    if [ ! -f "$BOOT_DST" ]; then
+        echo "==> Copying boot image to bin/..."
+        mkdir -p "$REPO_DIR/bin"
+        cp "$BOOT_SRC" "$BOOT_DST"
+        echo "==> Boot image ready at bin/kayproiv.img."
+    else
+        echo "==> Boot image already in bin/, skipping."
+    fi
 else
     echo "==> Boot image not ready. Place kayproiv.img in usr-bin/ and re-run setup."
     echo "    See: https://archive.org/details/kaypro-disk-cpm-2.2-and-s-basic"
